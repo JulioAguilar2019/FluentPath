@@ -324,7 +324,7 @@ Implementation notes:
 
 #### Story - Dashboard
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `Highest`
 
@@ -348,6 +348,12 @@ Suggested subtasks:
 - compute active task count
 - compute simple streak
 - render metric cards
+
+Implementation notes:
+
+- dashboard metrics now come from real `study_sessions` and `tasks` data
+- added today total, week total, total sessions, active tasks, completed tasks, and current streak
+- dashboard includes a recent activity preview based on saved sessions
 
 #### Story - Progress Charts
 
