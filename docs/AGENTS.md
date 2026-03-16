@@ -112,6 +112,7 @@ src/
 - free timer flow is implemented and saves study sessions to Supabase
 - study session history is available in the protected progress view
 - dashboard now shows real MVP metrics for today, this week, sessions, active tasks, and streak
+- pomodoro timer is implemented with profile-based preferences and session persistence
 
 ## Main Files Added or Updated During Setup
 
@@ -143,6 +144,10 @@ src/
 - `src/features/tasks/server.ts`
 - `src/features/tasks/types.ts`
 - `src/features/timer/actions.ts`
+- `src/features/timer/server.ts`
+- `src/features/timer/types.ts`
+- `src/features/timer/components/pomodoro-timer-client.tsx`
+- `src/features/timer/components/timer-workspace-client.tsx`
 - `src/features/timer/components/free-timer-client.tsx`
 - `docs/SUPABASE_SETUP.md`
 - `supabase/migrations/001_initial_schema.sql`
@@ -309,6 +314,13 @@ Expected implementation work for that story:
 - user can start a free timer
 - user can pause and resume
 - user can finish and save a study session into `study_sessions`
+
+### Pomodoro Progress
+
+- timer workspace supports both free timer and pomodoro mode
+- pomodoro reads focus and break preferences from `profiles`
+- phases automatically switch between focus and break states
+- saved pomodoro sessions include focus minutes, break minutes, and cycle count
 
 ### Study Sessions History Progress
 

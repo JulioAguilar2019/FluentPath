@@ -267,7 +267,7 @@ Implementation notes:
 
 #### Story - Pomodoro Timer
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `High`
 
@@ -289,6 +289,13 @@ Suggested subtasks:
 - add short break settings
 - save effective study time
 - connect pomodoro to selected task
+
+Implementation notes:
+
+- timer page now supports switching between free timer and pomodoro mode
+- pomodoro preferences are loaded from `profiles`
+- focus and break phases auto-transition during a running session
+- saved pomodoro sessions write focus minutes, break minutes, and cycles into `study_sessions`
 
 #### Story - Study Sessions History
 
