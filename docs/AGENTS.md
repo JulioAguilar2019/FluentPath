@@ -111,6 +111,7 @@ src/
 - task management CRUD is implemented with server actions and Supabase-backed pages
 - free timer flow is implemented and saves study sessions to Supabase
 - study session history is available in the protected progress view
+- dashboard now shows real MVP metrics for today, this week, sessions, active tasks, and streak
 
 ## Main Files Added or Updated During Setup
 
@@ -132,6 +133,8 @@ src/
 - `src/app/(app)/tasks/page.tsx`
 - `src/app/(app)/timer/page.tsx`
 - `src/app/(app)/progress/page.tsx`
+- `src/features/dashboard/server.ts`
+- `src/features/dashboard/types.ts`
 - `src/features/auth/components/auth-form.tsx`
 - `src/features/auth/components/sign-out-button.tsx`
 - `src/features/progress/server.ts`
@@ -313,3 +316,11 @@ Expected implementation work for that story:
 - recent sessions are fetched from `study_sessions`
 - each session shows task, mode, duration, and timestamps
 - dashboard now includes session counts from real saved data
+
+### Dashboard Progress
+
+- dashboard uses real session and task data
+- shows studied time for today and current week
+- shows total sessions and active/completed task counts
+- shows a simple current streak based on consecutive study days
+- surfaces recent session activity for quick review
