@@ -1,20 +1,20 @@
 import Link from "next/link";
 
-import { FreeTimerClient } from "@/features/timer/components/free-timer-client";
-import { getTaskWorkspace } from "@/features/tasks/server";
+import { TimerWorkspaceClient } from "@/features/timer/components/timer-workspace-client";
+import { getTimerWorkspace } from "@/features/timer/server";
 
 export default async function TimerPage() {
-  const { tasks } = await getTaskWorkspace();
-  const activeTasks = tasks.filter((task) => task.status === "active");
+  const workspace = await getTimerWorkspace();
+  const activeTasks = workspace.tasks;
 
   return (
     <main className="space-y-6 pb-8">
       {activeTasks.length > 0 ? (
-        <FreeTimerClient tasks={activeTasks} />
+        <TimerWorkspaceClient tasks={activeTasks} pomodoro={workspace.pomodoro} />
       ) : (
         <section className="rounded-[1.75rem] border border-dashed border-slate-300 bg-white/70 p-8 text-center shadow-[0_16px_40px_rgba(15,23,42,0.04)]">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Free timer
+            Timer workspace
           </p>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-slate-950">
             Create an active task before starting a study session.
