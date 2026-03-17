@@ -5,7 +5,13 @@ import { useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 
-export function SignOutButton() {
+export function SignOutButton({
+  label = "Sign out",
+  pendingLabel = "Signing out...",
+}: {
+  label?: string;
+  pendingLabel?: string;
+}) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
 
@@ -27,7 +33,7 @@ export function SignOutButton() {
       disabled={isPending}
       className="inline-flex h-10 items-center justify-center rounded-full border border-slate-300 bg-white px-4 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-70"
     >
-      {isPending ? "Signing out..." : "Sign out"}
+      {isPending ? pendingLabel : label}
     </button>
   );
 }

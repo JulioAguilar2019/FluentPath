@@ -267,7 +267,7 @@ Implementation notes:
 
 #### Story - Pomodoro Timer
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `High`
 
@@ -289,6 +289,13 @@ Suggested subtasks:
 - add short break settings
 - save effective study time
 - connect pomodoro to selected task
+
+Implementation notes:
+
+- timer page now supports switching between free timer and pomodoro mode
+- pomodoro preferences are loaded from `profiles`
+- focus and break phases auto-transition during a running session
+- saved pomodoro sessions write focus minutes, break minutes, and cycles into `study_sessions`
 
 #### Story - Study Sessions History
 
@@ -324,7 +331,7 @@ Implementation notes:
 
 #### Story - Dashboard
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `Highest`
 
@@ -348,6 +355,12 @@ Suggested subtasks:
 - compute active task count
 - compute simple streak
 - render metric cards
+
+Implementation notes:
+
+- dashboard metrics now come from real `study_sessions` and `tasks` data
+- added today total, week total, total sessions, active tasks, completed tasks, and current streak
+- dashboard includes a recent activity preview based on saved sessions
 
 #### Story - Progress Charts
 
@@ -376,7 +389,7 @@ Suggested subtasks:
 
 #### Story - Bilingual Support
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `High`
 
@@ -397,6 +410,13 @@ Suggested subtasks:
 - add Spanish copy
 - add language switcher
 - persist preference
+
+Implementation notes:
+
+- translation dictionaries added for English and Spanish
+- locale is resolved from cookie first and profile preference second
+- locale switcher is available on public and private layouts
+- selected language persists and syncs to `profiles.preferred_locale` for authenticated users
 
 #### Story - Settings
 

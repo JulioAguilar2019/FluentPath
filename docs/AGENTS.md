@@ -111,6 +111,9 @@ src/
 - task management CRUD is implemented with server actions and Supabase-backed pages
 - free timer flow is implemented and saves study sessions to Supabase
 - study session history is available in the protected progress view
+- dashboard now shows real MVP metrics for today, this week, sessions, active tasks, and streak
+- pomodoro timer is implemented with profile-based preferences and session persistence
+- bilingual support is implemented with locale persistence in cookies and profile preference sync
 
 ## Main Files Added or Updated During Setup
 
@@ -132,6 +135,8 @@ src/
 - `src/app/(app)/tasks/page.tsx`
 - `src/app/(app)/timer/page.tsx`
 - `src/app/(app)/progress/page.tsx`
+- `src/features/dashboard/server.ts`
+- `src/features/dashboard/types.ts`
 - `src/features/auth/components/auth-form.tsx`
 - `src/features/auth/components/sign-out-button.tsx`
 - `src/features/progress/server.ts`
@@ -140,7 +145,15 @@ src/
 - `src/features/tasks/server.ts`
 - `src/features/tasks/types.ts`
 - `src/features/timer/actions.ts`
+- `src/features/timer/server.ts`
+- `src/features/timer/types.ts`
+- `src/features/timer/components/pomodoro-timer-client.tsx`
+- `src/features/timer/components/timer-workspace-client.tsx`
 - `src/features/timer/components/free-timer-client.tsx`
+- `src/features/i18n/messages.ts`
+- `src/features/i18n/server.ts`
+- `src/features/i18n/components/locale-switcher.tsx`
+- `src/app/api/locale/route.ts`
 - `docs/SUPABASE_SETUP.md`
 - `supabase/migrations/001_initial_schema.sql`
 - `docs/DATABASE_SCHEMA.md`
@@ -307,9 +320,31 @@ Expected implementation work for that story:
 - user can pause and resume
 - user can finish and save a study session into `study_sessions`
 
+### Pomodoro Progress
+
+- timer workspace supports both free timer and pomodoro mode
+- pomodoro reads focus and break preferences from `profiles`
+- phases automatically switch between focus and break states
+- saved pomodoro sessions include focus minutes, break minutes, and cycle count
+
 ### Study Sessions History Progress
 
 - protected `/progress` page exists
 - recent sessions are fetched from `study_sessions`
 - each session shows task, mode, duration, and timestamps
 - dashboard now includes session counts from real saved data
+
+### Dashboard Progress
+
+- dashboard uses real session and task data
+- shows studied time for today and current week
+- shows total sessions and active/completed task counts
+- shows a simple current streak based on consecutive study days
+- surfaces recent session activity for quick review
+
+### Bilingual Progress
+
+- core UI supports English and Spanish
+- locale switcher exists on public and private areas
+- locale persists through a cookie and syncs to `profiles.preferred_locale` when authenticated
+- key pages are translated: home, auth, app shell, dashboard, tasks, timer, and progress

@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import { Manrope, Source_Code_Pro } from "next/font/google";
+import { Source_Code_Pro } from "next/font/google";
 
 import { siteConfig } from "@/config/site";
 import "./globals.css";
-
-const manrope = Manrope({
-  variable: "--font-manrope",
-  subsets: ["latin"],
-});
 
 const sourceCodePro = Source_Code_Pro({
   variable: "--font-source-code-pro",
@@ -29,8 +24,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${manrope.variable} ${sourceCodePro.variable} antialiased`}
+        className={`${sourceCodePro.variable} antialiased`}
       >
         {children}
       </body>
