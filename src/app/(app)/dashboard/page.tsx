@@ -1,7 +1,6 @@
-import Link from "next/link";
-
 import { getDashboardWorkspace } from "@/features/dashboard/server";
 import { getMessages } from "@/features/i18n/server";
+import { ProgressCharts } from "@/features/progress/components/progress-charts";
 import { requireUser } from "@/lib/auth";
 
 function formatDuration(totalSeconds: number) {
@@ -46,7 +45,7 @@ export default async function DashboardPage() {
           </div>
         </header>
 
-        <section className="mt-8 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <section className="mt-8 space-y-6">
           <div className="space-y-6">
             <div className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_20px_60px_rgba(15,23,42,0.12)]">
               <p className="text-sm uppercase tracking-[0.26em] text-sky-300">{messages.dashboard.coreMetrics}</p>
@@ -110,40 +109,21 @@ export default async function DashboardPage() {
               )}
             </div>
           </div>
-
-          <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.26em] text-sky-700">{messages.dashboard.nextUp}</p>
-            <ul className="mt-4 space-y-3 text-sm text-slate-600">
-              {messages.dashboard.upcoming.map((story) => (
-                <li key={story} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  {story}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-6 flex flex-wrap gap-3 text-sm">
-              <Link href="/tasks" className="rounded-full border border-slate-300 px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-50">
-                {messages.dashboard.openTasks}
-              </Link>
-              <Link href="/timer" className="rounded-full border border-slate-300 px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-50">
-                {messages.dashboard.openTimer}
-              </Link>
-              <Link href="/progress" className="rounded-full border border-slate-300 px-4 py-2 font-medium text-slate-700 transition hover:bg-slate-50">
-                {messages.dashboard.viewHistory}
-              </Link>
-            </div>
-
-            <div className="mt-8 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
-              <p className="text-sm font-semibold text-slate-700">{messages.dashboard.criteria}</p>
-              <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                {messages.dashboard.criteriaItems.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
         </section>
       </div>
+
+      <ProgressCharts
+        weeklyActivity={dashboard.weeklyActivity}
+        categoryBreakdown={dashboard.categoryBreakdown}
+        copy={{
+          weeklyTitle: messages.dashboard.weeklyTitle,
+          weeklyDescription: messages.dashboard.weeklyDescription,
+          categoriesTitle: messages.dashboard.categoriesTitle,
+          categoriesDescription: messages.dashboard.categoriesDescription,
+          minutesLabel: messages.dashboard.minutesLabel,
+          empty: messages.dashboard.chartsEmpty,
+        }}
+      />
     </main>
   );
 }

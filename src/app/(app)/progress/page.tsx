@@ -1,4 +1,5 @@
 import { getSessionHistoryWorkspace } from "@/features/progress/server";
+import { ProgressCharts } from "@/features/progress/components/progress-charts";
 import { getMessages } from "@/features/i18n/server";
 
 function formatDuration(totalSeconds: number) {
@@ -31,6 +32,8 @@ export default async function ProgressPage() {
     totalFocusSeconds,
     totalFreeSessions,
     totalPomodoroSessions,
+    weeklyActivity,
+    categoryBreakdown,
   } = await getSessionHistoryWorkspace();
 
   return (
@@ -141,6 +144,19 @@ export default async function ProgressPage() {
           </div>
         )}
       </section>
+
+      <ProgressCharts
+        weeklyActivity={weeklyActivity}
+        categoryBreakdown={categoryBreakdown}
+        copy={{
+          weeklyTitle: messages.progress.weeklyTitle,
+          weeklyDescription: messages.progress.weeklyDescription,
+          categoriesTitle: messages.progress.categoriesTitle,
+          categoriesDescription: messages.progress.categoriesDescription,
+          minutesLabel: messages.progress.minutesLabel,
+          empty: messages.progress.chartsEmpty,
+        }}
+      />
     </main>
   );
 }

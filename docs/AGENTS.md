@@ -115,6 +115,7 @@ src/
 - pomodoro timer is implemented with profile-based preferences and session persistence
 - bilingual support is implemented with locale persistence in cookies and profile preference sync
 - settings page is implemented for profile-based language and timer preferences
+- progress charts are implemented with Recharts using saved study session data
 
 ## Main Files Added or Updated During Setup
 
@@ -159,6 +160,7 @@ src/
 - `src/features/settings/server.ts`
 - `src/features/settings/components/settings-form.tsx`
 - `src/app/(app)/settings/page.tsx`
+- `src/features/progress/components/progress-charts.tsx`
 - `docs/SUPABASE_SETUP.md`
 - `supabase/migrations/001_initial_schema.sql`
 - `docs/DATABASE_SCHEMA.md`
@@ -361,3 +363,9 @@ Expected implementation work for that story:
 - users can update default timer mode
 - users can update pomodoro focus, short break, long break, and interval values
 - settings persist to `profiles` and refresh the bilingual workspace
+
+### Progress Charts
+
+- progress page now includes weekly activity chart
+- progress page now includes category breakdown chart
+- charts are rendered from real `study_sessions` data via Recharts
