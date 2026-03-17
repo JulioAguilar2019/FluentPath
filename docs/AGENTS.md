@@ -113,6 +113,7 @@ src/
 - study session history is available in the protected progress view
 - dashboard now shows real MVP metrics for today, this week, sessions, active tasks, and streak
 - pomodoro timer is implemented with profile-based preferences and session persistence
+- bilingual support is implemented with locale persistence in cookies and profile preference sync
 
 ## Main Files Added or Updated During Setup
 
@@ -149,6 +150,10 @@ src/
 - `src/features/timer/components/pomodoro-timer-client.tsx`
 - `src/features/timer/components/timer-workspace-client.tsx`
 - `src/features/timer/components/free-timer-client.tsx`
+- `src/features/i18n/messages.ts`
+- `src/features/i18n/server.ts`
+- `src/features/i18n/components/locale-switcher.tsx`
+- `src/app/api/locale/route.ts`
 - `docs/SUPABASE_SETUP.md`
 - `supabase/migrations/001_initial_schema.sql`
 - `docs/DATABASE_SCHEMA.md`
@@ -336,3 +341,10 @@ Expected implementation work for that story:
 - shows total sessions and active/completed task counts
 - shows a simple current streak based on consecutive study days
 - surfaces recent session activity for quick review
+
+### Bilingual Progress
+
+- core UI supports English and Spanish
+- locale switcher exists on public and private areas
+- locale persists through a cookie and syncs to `profiles.preferred_locale` when authenticated
+- key pages are translated: home, auth, app shell, dashboard, tasks, timer, and progress

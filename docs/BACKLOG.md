@@ -389,7 +389,7 @@ Suggested subtasks:
 
 #### Story - Bilingual Support
 
-- status: pending
+- status: completed
 - story points: `5`
 - priority: `High`
 
@@ -410,6 +410,13 @@ Suggested subtasks:
 - add Spanish copy
 - add language switcher
 - persist preference
+
+Implementation notes:
+
+- translation dictionaries added for English and Spanish
+- locale is resolved from cookie first and profile preference second
+- locale switcher is available on public and private layouts
+- selected language persists and syncs to `profiles.preferred_locale` for authenticated users
 
 #### Story - Settings
 

@@ -2,11 +2,14 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 
+import type { Locale, Messages } from "@/features/i18n/messages";
 import { saveFreeSessionAction } from "@/features/timer/actions";
 import type { TaskItem } from "@/features/tasks/types";
 
 type FreeTimerClientProps = {
   tasks: TaskItem[];
+  messages: Messages;
+  locale: Locale;
 };
 
 type TimerStatus = "idle" | "running" | "paused" | "saving";
@@ -40,7 +43,7 @@ function formatTargetMinutes(minutes: number) {
   return `${hours}h ${remainingMinutes}m`;
 }
 
-export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
+export function FreeTimerClient({ tasks, messages, locale }: FreeTimerClientProps) {
   const [selectedTaskId, setSelectedTaskId] = useState(tasks[0]?.id ?? "");
   const [status, setStatus] = useState<TimerStatus>("idle");
   const [sessionStartMs, setSessionStartMs] = useState<number | null>(null);
@@ -91,8 +94,8 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
   }
 
   function startTimer() {
-    if (!selectedTaskId) {
-      setErrorMessage("Choose a task before starting the timer.");
+      if (!selectedTaskId) {
+      setErrorMessage(messages.timer.free.chooseTaskError);
       return;
     }
 
@@ -126,7 +129,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
 
   function saveSession() {
     if (!selectedTaskId || !sessionStartMs) {
-      setErrorMessage("Start a task session before saving.");
+      setErrorMessage(messages.timer.free.startBeforeSaveError);
       return;
     }
 
@@ -137,7 +140,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
         : displaySeconds;
 
     if (durationSeconds <= 0) {
-      setErrorMessage("The session must last at least one second.");
+      setErrorMessage(messages.timer.free.minimumDurationError);
       return;
     }
 
@@ -156,10 +159,10 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
         });
 
         resetSession();
-        setSuccessMessage(`Session saved for ${selectedTask?.title ?? "task"}.`);
+        setSuccessMessage(`${messages.timer.free.saveSuccess} ${selectedTask?.title ?? messages.timer.free.task}.`);
       } catch (error) {
         setStatus(segmentStartMs ? "running" : "paused");
-        setErrorMessage(error instanceof Error ? error.message : "Could not save the session.");
+        setErrorMessage(error instanceof Error ? error.message : messages.timer.free.saveError);
       }
     });
   }
@@ -168,17 +171,17 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
       <section className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_24px_70px_rgba(15,23,42,0.15)]">
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-300">
-          Free timer
+          {messages.timer.free.badge}
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-          Run an open study block and save the real time you complete.
+          {messages.timer.free.title}
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-          Choose a task, start your session, pause when needed, and save the final duration into `study_sessions`.
+          {messages.timer.free.description}
         </p>
 
         <div className="mt-8 rounded-[1.75rem] border border-white/10 bg-white/6 p-6 text-center">
-          <p className="text-sm uppercase tracking-[0.24em] text-slate-300">Live duration</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-slate-300">{messages.timer.free.liveDuration}</p>
           <p className="mt-4 text-5xl font-semibold tracking-[-0.05em] sm:text-6xl">
             {formatDuration(displaySeconds)}
           </p>
@@ -190,7 +193,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                 disabled={!canStart}
                 className="rounded-full bg-sky-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-sky-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Start
+                {messages.timer.free.start}
               </button>
             ) : null}
 
@@ -200,7 +203,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                 onClick={pauseTimer}
                 className="rounded-full border border-white/20 bg-white/8 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/12"
               >
-                Pause
+                {messages.timer.free.pause}
               </button>
             ) : null}
 
@@ -210,7 +213,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                 onClick={resumeTimer}
                 className="rounded-full border border-white/20 bg-white/8 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/12"
               >
-                Resume
+                {messages.timer.free.resume}
               </button>
             ) : null}
 
@@ -221,7 +224,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                 disabled={!canFinish || isPending || status === "saving"}
                 className="rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isPending || status === "saving" ? "Saving..." : "Finish and save"}
+                {isPending || status === "saving" ? messages.timer.free.saving : messages.timer.free.finish}
               </button>
             ) : null}
 
@@ -232,7 +235,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                 disabled={isPending}
                 className="rounded-full border border-white/20 bg-transparent px-5 py-2.5 text-sm font-medium text-white transition hover:bg-white/8 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Reset
+                {messages.timer.free.reset}
               </button>
             ) : null}
           </div>
@@ -242,11 +245,11 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
       <section className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Session setup
+            {messages.timer.free.setup}
           </p>
           <div className="mt-5 space-y-4">
             <label className="block space-y-2 text-sm font-medium text-slate-700">
-              Task
+              {messages.timer.free.task}
               <select
                 value={selectedTaskId}
                 onChange={(event) => setSelectedTaskId(event.target.value)}
@@ -262,12 +265,12 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
             </label>
 
             <label className="block space-y-2 text-sm font-medium text-slate-700">
-              Notes
+              {messages.timer.free.notes}
               <textarea
                 rows={4}
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
-                placeholder="Optional notes about what you studied during this session"
+                placeholder={messages.timer.free.notesPlaceholder}
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-normal text-slate-900 outline-none transition focus:border-sky-400"
               />
             </label>
@@ -288,7 +291,7 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
 
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Selected task
+            {messages.timer.free.selectedTask}
           </p>
 
           {selectedTask ? (
@@ -298,37 +301,37 @@ export function FreeTimerClient({ tasks }: FreeTimerClientProps) {
                   {selectedTask.title}
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {selectedTask.description || "No description yet. Use the notes field for what happens in this session."}
+                  {selectedTask.description || messages.tasks.noDescription}
                 </p>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-sm text-slate-500">Target</p>
+                  <p className="text-sm text-slate-500">{messages.tasks.target}</p>
                   <p className="mt-2 text-lg font-semibold text-slate-950">
                     {formatTargetMinutes(selectedTask.target_minutes)}
                   </p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-sm text-slate-500">Category</p>
+                  <p className="text-sm text-slate-500">{messages.tasks.categoryLabel}</p>
                   <p className="mt-2 text-lg font-semibold text-slate-950">
-                    {selectedTask.category?.name_en ?? "No category"}
+                    {selectedTask.category ? (locale === "es" ? selectedTask.category.name_es : selectedTask.category.name_en) : messages.common.noCategory}
                   </p>
                 </div>
                 <div className="rounded-2xl bg-slate-50 p-4">
-                  <p className="text-sm text-slate-500">Preferred mode</p>
+                  <p className="text-sm text-slate-500">{messages.tasks.preferredMode}</p>
                   <p className="mt-2 text-lg font-semibold text-slate-950">
                     {selectedTask.timer_mode_preference === "pomodoro"
-                      ? "Pomodoro"
-                      : selectedTask.timer_mode_preference === "free"
-                        ? "Free timer"
-                        : "No preference"}
+                        ? messages.common.pomodoro
+                        : selectedTask.timer_mode_preference === "free"
+                        ? messages.common.freeTimer
+                        : messages.common.noPreference}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="mt-5 text-sm text-slate-600">No active task selected.</p>
+            <p className="mt-5 text-sm text-slate-600">{messages.timer.free.noActiveTaskSelected}</p>
           )}
         </div>
       </section>

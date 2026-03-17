@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import type { Locale, Messages } from "@/features/i18n/messages";
 import type { TimerWorkspace } from "@/features/timer/types";
 
 import { FreeTimerClient } from "./free-timer-client";
@@ -9,7 +10,15 @@ import { PomodoroTimerClient } from "./pomodoro-timer-client";
 
 type Mode = "free" | "pomodoro";
 
-export function TimerWorkspaceClient({ tasks, pomodoro }: TimerWorkspace) {
+export function TimerWorkspaceClient({
+  tasks,
+  pomodoro,
+  messages,
+  locale,
+}: TimerWorkspace & {
+  messages: Messages;
+  locale: Locale;
+}) {
   const [mode, setMode] = useState<Mode>("free");
 
   return (
@@ -25,7 +34,7 @@ export function TimerWorkspaceClient({ tasks, pomodoro }: TimerWorkspace) {
                 : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
             }`}
           >
-            Free timer
+            {messages.timer.workspace.free}
           </button>
           <button
             type="button"
@@ -36,15 +45,15 @@ export function TimerWorkspaceClient({ tasks, pomodoro }: TimerWorkspace) {
                 : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
             }`}
           >
-            Pomodoro
+            {messages.timer.workspace.pomodoro}
           </button>
         </div>
       </section>
 
       {mode === "free" ? (
-        <FreeTimerClient tasks={tasks} />
+        <FreeTimerClient tasks={tasks} messages={messages} locale={locale} />
       ) : (
-        <PomodoroTimerClient tasks={tasks} preferences={pomodoro} />
+        <PomodoroTimerClient tasks={tasks} preferences={pomodoro} messages={messages} locale={locale} />
       )}
     </div>
   );
