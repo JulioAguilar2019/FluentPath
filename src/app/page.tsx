@@ -1,21 +1,11 @@
 import Link from "next/link";
 
-const highlights = [
-  {
-    title: "Dashboard with momentum",
-    description: "See your study pulse, active tasks, and recent wins at a glance.",
-  },
-  {
-    title: "Task-first focus",
-    description: "Organize English practice into concrete tasks before the timer starts.",
-  },
-  {
-    title: "Bilingual-ready foundation",
-    description: "Designed for English and Spanish UI from the first sprint.",
-  },
-];
+import { LocaleSwitcher } from "@/features/i18n/components/locale-switcher";
+import { getMessages } from "@/features/i18n/server";
 
-export default function Home() {
+export default async function Home() {
+  const { locale, messages } = await getMessages();
+
   return (
     <main className="relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(82,128,255,0.18),_transparent_34%),radial-gradient(circle_at_80%_15%,_rgba(255,193,122,0.24),_transparent_20%),linear-gradient(180deg,_#fffdf8_0%,_#f5f2ea_52%,_#eef4ff_100%)] px-6 py-8 text-slate-900">
       <div className="absolute inset-x-0 top-0 h-56 bg-[linear-gradient(180deg,rgba(255,255,255,0.8),transparent)]" />
@@ -23,24 +13,25 @@ export default function Home() {
         <header className="flex flex-col gap-4 border-b border-slate-200/70 px-6 py-5 md:flex-row md:items-center md:justify-between md:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-700">
-              FluentPath
+              {messages.common.appName}
             </p>
             <h1 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950 md:text-3xl">
-              A focused shell for English-study momentum.
+              {messages.home.title}
             </h1>
           </div>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <LocaleSwitcher locale={locale} messages={messages} />
             <Link
               href="/sign-in"
               className="inline-flex h-9 items-center justify-center rounded-lg border border-border bg-background px-3 text-sm font-medium text-foreground transition-all hover:bg-muted"
             >
-              Sign in
+              {messages.home.signIn}
             </Link>
             <Link
               href="/dashboard"
               className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground shadow-[0_12px_30px_rgba(73,112,255,0.24)] transition-all hover:opacity-90"
             >
-              Open app shell
+              {messages.home.openApp}
             </Link>
           </div>
         </header>
@@ -50,18 +41,18 @@ export default function Home() {
             <div className="max-w-2xl space-y-6">
               <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm text-slate-600 shadow-sm">
                 <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                Epic 2 in progress - authentication and user management
+                {messages.home.epic}
               </div>
               <h2 className="max-w-xl text-5xl font-semibold leading-none tracking-[-0.05em] text-slate-950 md:text-6xl">
-                Study structure that feels calm, bright, and ready to grow.
+                {messages.home.headline}
               </h2>
               <p className="max-w-xl text-lg leading-8 text-slate-600">
-                FluentPath now has a public entry, a private workspace shell, and scaffolded routes for dashboard, tasks, timer, progress, and settings. Pequeno, claro y listo para el MVP.
+                {messages.home.description}
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
-              {highlights.map((item) => (
+              {messages.home.highlights.map((item) => (
                 <article
                   key={item.title}
                   className="rounded-[1.5rem] border border-slate-200/80 bg-white/75 p-5 shadow-[0_12px_32px_rgba(15,23,42,0.06)]"
@@ -81,27 +72,20 @@ export default function Home() {
             <div className="flex items-center justify-between border-b border-white/10 pb-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.3em] text-sky-200/80">
-                  Workspace preview
-                </p>
-                <p className="mt-2 text-xl font-semibold">Today&apos;s study rhythm</p>
+                    {messages.home.preview}
+                  </p>
+                <p className="mt-2 text-xl font-semibold">{messages.home.rhythm}</p>
               </div>
               <div className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-200">
-                Mobile + desktop
+                {messages.home.mobile}
               </div>
             </div>
 
             <div className="mt-5 space-y-4">
               <div className="rounded-[1.4rem] bg-white/8 p-4">
-                <p className="text-sm text-slate-300">Quick routes</p>
-                <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
-                  {[
-                    "Dashboard",
-                    "Tasks",
-                    "Timer",
-                    "Progress",
-                    "Settings",
-                    "Session history",
-                  ].map((label) => (
+                  <p className="text-sm text-slate-300">{messages.home.quickRoutes}</p>
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
+                  {messages.home.routes.map((label) => (
                     <div
                       key={label}
                       className="rounded-2xl border border-white/10 bg-white/6 px-3 py-3"
@@ -114,11 +98,11 @@ export default function Home() {
 
               <div className="grid gap-3 md:grid-cols-2">
                 <div className="rounded-[1.4rem] bg-linear-to-br from-sky-400 to-blue-600 p-4 text-white">
-                  <p className="text-sm text-white/80">Focus target</p>
+                  <p className="text-sm text-white/80">{messages.home.focusTarget}</p>
                   <p className="mt-3 text-3xl font-semibold">45 min</p>
                 </div>
                 <div className="rounded-[1.4rem] bg-white/8 p-4">
-                  <p className="text-sm text-slate-300">Main sections online</p>
+                  <p className="text-sm text-slate-300">{messages.home.sectionsOnline}</p>
                   <p className="mt-3 text-3xl font-semibold">5</p>
                 </div>
               </div>

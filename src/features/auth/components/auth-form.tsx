@@ -11,28 +11,22 @@ type AuthFormMode = "sign-in" | "sign-up";
 type AuthFormProps = {
   mode: AuthFormMode;
   nextPath?: string;
+  copy: {
+    email: string;
+    password: string;
+    emailPlaceholder: string;
+    passwordPlaceholder: string;
+    submitLabel: string;
+    loadingLabel: string;
+    successLabel: string;
+    genericError: string;
+    footerLabel: string;
+    footerHref: string;
+    footerLinkLabel: string;
+  };
 };
 
-const copy = {
-  "sign-in": {
-    submitLabel: "Sign in",
-    loadingLabel: "Signing in...",
-    successLabel: "Signed in. Redirecting...",
-    footerLabel: "Need an account?",
-    footerHref: "/sign-up",
-    footerLinkLabel: "Create one",
-  },
-  "sign-up": {
-    submitLabel: "Create account",
-    loadingLabel: "Creating account...",
-    successLabel: "Account created. Check your inbox if email confirmation is enabled.",
-    footerLabel: "Already registered?",
-    footerHref: "/sign-in",
-    footerLinkLabel: "Sign in",
-  },
-} as const;
-
-export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
+export function AuthForm({ mode, nextPath = "/dashboard", copy }: AuthFormProps) {
   const router = useRouter();
 
   const [email, setEmail] = useState("");
@@ -60,7 +54,7 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
           throw error;
         }
 
-        setSuccessMessage(copy[mode].successLabel);
+        setSuccessMessage(copy.successLabel);
         router.replace(nextPath);
         router.refresh();
         return;
@@ -80,11 +74,11 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
         throw error;
       }
 
-      setSuccessMessage(copy[mode].successLabel);
+      setSuccessMessage(copy.successLabel);
       router.replace(data.session ? nextPath : "/sign-in");
       router.refresh();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Something went wrong.");
+      setErrorMessage(error instanceof Error ? error.message : copy.genericError);
     } finally {
       setIsPending(false);
     }
@@ -94,7 +88,7 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
     <form className="space-y-5" onSubmit={handleSubmit}>
       <div className="space-y-2">
         <label className="text-sm font-medium text-slate-100" htmlFor={`${mode}-email`}>
-          Email
+          {copy.email}
         </label>
         <input
           id={`${mode}-email`}
@@ -104,13 +98,13 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className="flex h-11 w-full rounded-xl border border-white/15 bg-slate-950/60 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-400"
-          placeholder="you@example.com"
+          placeholder={copy.emailPlaceholder}
         />
       </div>
 
       <div className="space-y-2">
         <label className="text-sm font-medium text-slate-100" htmlFor={`${mode}-password`}>
-          Password
+          {copy.password}
         </label>
         <input
           id={`${mode}-password`}
@@ -121,7 +115,7 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           className="flex h-11 w-full rounded-xl border border-white/15 bg-slate-950/60 px-4 text-sm text-white outline-none transition placeholder:text-slate-500 focus:border-sky-400"
-          placeholder="At least 8 characters"
+          placeholder={copy.passwordPlaceholder}
         />
       </div>
 
@@ -142,13 +136,13 @@ export function AuthForm({ mode, nextPath = "/dashboard" }: AuthFormProps) {
         disabled={isPending}
         className="inline-flex h-11 w-full items-center justify-center rounded-xl bg-white px-4 text-sm font-semibold text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-70"
       >
-        {isPending ? copy[mode].loadingLabel : copy[mode].submitLabel}
+        {isPending ? copy.loadingLabel : copy.submitLabel}
       </button>
 
       <p className="text-sm text-slate-300">
-        {copy[mode].footerLabel}{" "}
-        <Link href={copy[mode].footerHref} className="font-medium text-white underline underline-offset-4">
-          {copy[mode].footerLinkLabel}
+        {copy.footerLabel}{" "}
+        <Link href={copy.footerHref} className="font-medium text-white underline underline-offset-4">
+          {copy.footerLinkLabel}
         </Link>
       </p>
     </form>

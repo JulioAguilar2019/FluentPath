@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useTransition } from "react";
 
+import type { Locale, Messages } from "@/features/i18n/messages";
 import { savePomodoroSessionAction } from "@/features/timer/actions";
 import type { TaskItem } from "@/features/tasks/types";
 
@@ -10,6 +11,8 @@ import type { PomodoroPreferences } from "../types";
 type PomodoroTimerClientProps = {
   tasks: TaskItem[];
   preferences: PomodoroPreferences;
+  messages: Messages;
+  locale: Locale;
 };
 
 type Phase = "focus" | "shortBreak" | "longBreak";
@@ -54,7 +57,7 @@ const phaseCopy: Record<Phase, { label: string; accent: string; helper: string }
   },
 };
 
-export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientProps) {
+export function PomodoroTimerClient({ tasks, preferences, messages, locale }: PomodoroTimerClientProps) {
   const [focusMinutes, setFocusMinutes] = useState(preferences.focusMinutes);
   const [shortBreakMinutes, setShortBreakMinutes] = useState(preferences.shortBreakMinutes);
   const [longBreakMinutes, setLongBreakMinutes] = useState(preferences.longBreakMinutes);
@@ -216,12 +219,12 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
 
   function startPomodoro() {
     if (!selectedTaskId) {
-      setErrorMessage("Choose a task before starting Pomodoro mode.");
+      setErrorMessage(messages.timer.pomodoro.chooseTaskError);
       return;
     }
 
     if (focusMinutes <= 0 || shortBreakMinutes <= 0 || longBreakMinutes <= 0 || longBreakInterval <= 0) {
-      setErrorMessage("Focus, break times, and long break interval must be greater than zero.");
+      setErrorMessage(messages.timer.pomodoro.invalidSetupError);
       return;
     }
 
@@ -256,7 +259,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
 
   function savePomodoro() {
     if (!selectedTaskId || !sessionStartMs || !canSave) {
-      setErrorMessage("Complete at least one focus cycle before saving the session.");
+      setErrorMessage(messages.timer.pomodoro.completeCycleError);
       return;
     }
 
@@ -279,35 +282,53 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
         });
 
         resetSession();
-        setSuccessMessage(`Pomodoro session saved for ${selectedTask?.title ?? "task"}.`);
+        setSuccessMessage(`${messages.timer.pomodoro.saveSuccess} ${selectedTask?.title ?? messages.timer.free.task}.`);
       } catch (error) {
         setStatus(phaseStartMs ? "running" : "paused");
-        setErrorMessage(error instanceof Error ? error.message : "Could not save the pomodoro session.");
+        setErrorMessage(error instanceof Error ? error.message : messages.timer.pomodoro.saveError);
       }
     });
   }
+
+  const phaseText = {
+    focus: {
+      label: messages.timer.pomodoro.focus,
+      helper: messages.timer.pomodoro.focusHelper,
+      accent: phaseCopy.focus.accent,
+    },
+    shortBreak: {
+      label: messages.timer.pomodoro.shortBreak,
+      helper: messages.timer.pomodoro.shortBreakHelper,
+      accent: phaseCopy.shortBreak.accent,
+    },
+    longBreak: {
+      label: messages.timer.pomodoro.longBreak,
+      helper: messages.timer.pomodoro.longBreakHelper,
+      accent: phaseCopy.longBreak.accent,
+    },
+  } as const;
 
   return (
     <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
       <section className="rounded-[1.75rem] border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_24px_70px_rgba(15,23,42,0.15)]">
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-sky-300">
-          Pomodoro timer
+          {messages.timer.pomodoro.badge}
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-          Study in structured focus blocks with automatic break transitions.
+          {messages.timer.pomodoro.title}
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-          Pomodoro mode uses your profile preferences and saves completed focus time, break minutes, and total cycles into `study_sessions`.
+          {messages.timer.pomodoro.description}
         </p>
 
-        <div className={`mt-8 rounded-[1.75rem] border border-white/10 bg-linear-to-br ${phaseCopy[phase].accent} p-6 text-center text-slate-950`}>
+        <div className={`mt-8 rounded-[1.75rem] border border-white/10 bg-linear-to-br ${phaseText[phase].accent} p-6 text-center text-slate-950`}>
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-900/70">
-            {phaseCopy[phase].label}
+            {phaseText[phase].label}
           </p>
           <p className="mt-4 text-5xl font-semibold tracking-[-0.05em] sm:text-6xl">
             {formatClock(secondsLeft)}
           </p>
-          <p className="mt-4 text-sm text-slate-900/80">{phaseCopy[phase].helper}</p>
+          <p className="mt-4 text-sm text-slate-900/80">{phaseText[phase].helper}</p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             {status === "idle" ? (
@@ -316,7 +337,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
                 onClick={startPomodoro}
                 className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
               >
-                Start pomodoro
+                {messages.timer.pomodoro.start}
               </button>
             ) : null}
 
@@ -326,7 +347,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
                 onClick={pausePomodoro}
                 className="rounded-full border border-slate-900/10 bg-white/50 px-5 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-white/70"
               >
-                Pause
+                {messages.timer.pomodoro.pause}
               </button>
             ) : null}
 
@@ -336,7 +357,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
                 onClick={resumePomodoro}
                 className="rounded-full border border-slate-900/10 bg-white/50 px-5 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-white/70"
               >
-                Resume
+                {messages.timer.pomodoro.resume}
               </button>
             ) : null}
 
@@ -347,7 +368,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
                 disabled={!canSave || isPending || status === "saving"}
                 className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {isPending || status === "saving" ? "Saving..." : "Finish and save"}
+                {isPending || status === "saving" ? messages.timer.pomodoro.saving : messages.timer.pomodoro.finish}
               </button>
             ) : null}
 
@@ -358,7 +379,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
                 disabled={isPending}
                 className="rounded-full border border-slate-900/10 bg-transparent px-5 py-2.5 text-sm font-medium text-slate-950 transition hover:bg-white/40 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Reset
+                {messages.timer.pomodoro.reset}
               </button>
             ) : null}
           </div>
@@ -368,11 +389,11 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
       <section className="space-y-6">
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Pomodoro setup
+            {messages.timer.pomodoro.setup}
           </p>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             <label className="space-y-2 text-sm font-medium text-slate-700 md:col-span-2">
-              Task
+              {messages.timer.free.task}
               <select
                 value={selectedTaskId}
                 onChange={(event) => setSelectedTaskId(event.target.value)}
@@ -388,7 +409,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
             </label>
 
             <label className="space-y-2 text-sm font-medium text-slate-700">
-              Focus minutes
+              {messages.timer.pomodoro.focusMinutes}
               <input
                 type="number"
                 min={1}
@@ -399,7 +420,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
               />
             </label>
             <label className="space-y-2 text-sm font-medium text-slate-700">
-              Short break minutes
+              {messages.timer.pomodoro.shortBreakMinutes}
               <input
                 type="number"
                 min={1}
@@ -410,7 +431,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
               />
             </label>
             <label className="space-y-2 text-sm font-medium text-slate-700">
-              Long break minutes
+              {messages.timer.pomodoro.longBreakMinutes}
               <input
                 type="number"
                 min={1}
@@ -421,7 +442,7 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
               />
             </label>
             <label className="space-y-2 text-sm font-medium text-slate-700">
-              Long break every
+              {messages.timer.pomodoro.longBreakEvery}
               <input
                 type="number"
                 min={1}
@@ -433,12 +454,12 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
             </label>
 
             <label className="space-y-2 text-sm font-medium text-slate-700 md:col-span-2">
-              Notes
+              {messages.timer.free.notes}
               <textarea
                 rows={4}
                 value={notes}
                 onChange={(event) => setNotes(event.target.value)}
-                placeholder="Optional notes about what you practiced during the pomodoro session"
+                placeholder={messages.timer.pomodoro.notesPlaceholder}
                 className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-normal text-slate-900 outline-none transition focus:border-sky-400"
               />
             </label>
@@ -459,29 +480,40 @@ export function PomodoroTimerClient({ tasks, preferences }: PomodoroTimerClientP
 
         <div className="rounded-[1.75rem] border border-slate-200 bg-white p-6 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
           <p className="text-sm font-semibold uppercase tracking-[0.24em] text-sky-700">
-            Session summary
+            {messages.timer.pomodoro.summary}
           </p>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <div className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Completed cycles</p>
+              <p className="text-sm text-slate-500">{messages.timer.pomodoro.completedCycles}</p>
               <p className="mt-2 text-xl font-semibold text-slate-950">{completedFocusCycles}</p>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Focus tracked</p>
+              <p className="text-sm text-slate-500">{messages.timer.pomodoro.focusTracked}</p>
               <p className="mt-2 text-xl font-semibold text-slate-950">{formatTargetMinutes(Math.round(totalFocusSeconds / 60))}</p>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Break tracked</p>
+              <p className="text-sm text-slate-500">{messages.timer.pomodoro.breakTracked}</p>
               <p className="mt-2 text-xl font-semibold text-slate-950">{formatTargetMinutes(Math.round(totalBreakSeconds / 60))}</p>
             </div>
             <div className="rounded-2xl bg-slate-50 p-4">
-              <p className="text-sm text-slate-500">Task target</p>
+              <p className="text-sm text-slate-500">{messages.timer.pomodoro.taskTarget}</p>
               <p className="mt-2 text-xl font-semibold text-slate-950">
                 {selectedTask ? formatTargetMinutes(selectedTask.target_minutes) : "-"}
               </p>
             </div>
           </div>
+
+          {selectedTask ? (
+            <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+              <span className="font-medium text-slate-950">{messages.tasks.categoryLabel}: </span>
+              {selectedTask.category
+                ? locale === "es"
+                  ? selectedTask.category.name_es
+                  : selectedTask.category.name_en
+                : messages.common.noCategory}
+            </div>
+          ) : null}
         </div>
       </section>
     </div>
