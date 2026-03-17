@@ -17,6 +17,7 @@ export default async function AppLayout({
     { href: "/tasks", label: messages.nav.tasks },
     { href: "/timer", label: messages.nav.timer },
     { href: "/progress", label: messages.nav.progress },
+    { href: "/settings", label: messages.nav.settings },
   ];
 
   return (
