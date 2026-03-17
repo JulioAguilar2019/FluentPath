@@ -22,4 +22,14 @@ export type SessionHistoryWorkspace = {
   totalFocusSeconds: number;
   totalFreeSessions: number;
   totalPomodoroSessions: number;
+  weeklyActivity: Array<{
+    date: string;
+    label: string;
+    totalMinutes: number;
+  }>;
+  categoryBreakdown: Array<{
+    name: string;
+    minutes: number;
+    color: string;
+  }>;
 };

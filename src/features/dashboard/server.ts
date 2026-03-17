@@ -9,7 +9,9 @@ type SessionRow = {
   started_at: string;
   duration_seconds: number;
   mode: "free" | "pomodoro";
-  task: { title: string } | { title: string }[] | null;
+  task:
+    | ({ title: string; category?: { name_en: string; color: string } | { name_en: string; color: string }[] | null } | null)
+    | ({ title: string; category?: { name_en: string; color: string } | { name_en: string; color: string }[] | null } | null)[];
 };
 
 type TaskStatusRow = {
@@ -51,6 +53,20 @@ function getCurrentStreak(sessions: SessionRow[]) {
   return streak;
 }
 
+function createLast7DaysTemplate() {
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - (6 - index));
+
+    return {
+      key: date.toISOString().slice(0, 10),
+      label: new Intl.DateTimeFormat("en", { weekday: "short" }).format(date),
+      totalMinutes: 0,
+    };
+  });
+}
+
 export const getDashboardWorkspace = cache(async (): Promise<DashboardMetricWorkspace> => {
   const supabase = await createClient();
 
@@ -63,7 +79,7 @@ export const getDashboardWorkspace = cache(async (): Promise<DashboardMetricWork
           started_at,
           duration_seconds,
           mode,
-          task:tasks(title)
+          task:tasks(title, category:task_categories(name_en, color))
         `
       )
       .eq("status", "completed")
@@ -94,6 +110,36 @@ export const getDashboardWorkspace = cache(async (): Promise<DashboardMetricWork
     return new Date(session.started_at) >= weekStart ? sum + session.duration_seconds : sum;
   }, 0);
 
+  const weeklyActivityMap = new Map(createLast7DaysTemplate().map((day) => [day.key, day]));
+  const categoryTotals = new Map<string, { name: string; minutes: number; color: string }>();
+
+  sessions.forEach((session) => {
+    const sessionDate = session.started_at.slice(0, 10);
+    const dayEntry = weeklyActivityMap.get(sessionDate);
+
+    if (dayEntry) {
+      dayEntry.totalMinutes += Math.round(session.duration_seconds / 60);
+    }
+
+    const task = Array.isArray(session.task) ? session.task[0] ?? null : session.task;
+    const taskCategory = task?.category;
+    const category = Array.isArray(taskCategory) ? taskCategory[0] ?? null : taskCategory;
+
+    if (category) {
+      const existing = categoryTotals.get(category.name_en);
+
+      if (existing) {
+        existing.minutes += Math.round(session.duration_seconds / 60);
+      } else {
+        categoryTotals.set(category.name_en, {
+          name: category.name_en,
+          minutes: Math.round(session.duration_seconds / 60),
+          color: category.color,
+        });
+      }
+    }
+  });
+
   return {
     todaySeconds,
     weekSeconds,
@@ -101,6 +147,11 @@ export const getDashboardWorkspace = cache(async (): Promise<DashboardMetricWork
     activeTasks: tasks.filter((task) => task.status === "active").length,
     completedTasks: tasks.filter((task) => task.status === "completed").length,
     currentStreak: getCurrentStreak(sessions),
+    weeklyActivity: Array.from(weeklyActivityMap.values()).map(({ key, ...rest }) => ({
+      date: key,
+      ...rest,
+    })),
+    categoryBreakdown: Array.from(categoryTotals.values()).sort((a, b) => b.minutes - a.minutes),
     recentActivity: sessions.slice(0, 5).map((session) => ({
       id: session.id,
       startedAt: session.started_at,

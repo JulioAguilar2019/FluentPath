@@ -5,6 +5,16 @@ export type DashboardMetricWorkspace = {
   activeTasks: number;
   completedTasks: number;
   currentStreak: number;
+  weeklyActivity: Array<{
+    date: string;
+    label: string;
+    totalMinutes: number;
+  }>;
+  categoryBreakdown: Array<{
+    name: string;
+    minutes: number;
+    color: string;
+  }>;
   recentActivity: Array<{
     id: string;
     startedAt: string;

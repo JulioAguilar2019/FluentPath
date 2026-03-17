@@ -450,6 +450,36 @@ Implementation notes:
 - saving settings also syncs the locale cookie for immediate bilingual updates
 - app navigation now includes the settings route in the private workspace
 
+#### Story - Progress Charts
+
+- status: completed
+- story points: `3`
+- priority: `Medium`
+
+Goal:
+
+- visualize study consistency and activity through charts
+
+Acceptance criteria:
+
+- at least one weekly chart exists
+- chart data reflects the authenticated user
+- chart rendering works without breaking the page
+
+Suggested subtasks:
+
+- install `Recharts`
+- prepare chart data shape
+- create weekly chart
+- create category or activity breakdown chart
+
+Implementation notes:
+
+- `recharts` installed and integrated on the progress page
+- weekly activity chart shows tracked minutes over the last seven days
+- category breakdown chart shows study time by task category
+- charts use saved `study_sessions` and related task category data
+
 ### Epic 9 - Deployment and Release
 
 #### Story - Deployment
