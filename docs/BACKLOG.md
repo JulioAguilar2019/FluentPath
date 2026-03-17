@@ -420,7 +420,7 @@ Implementation notes:
 
 #### Story - Settings
 
-- status: pending
+- status: completed
 - story points: `3`
 - priority: `Medium`
 
@@ -442,6 +442,13 @@ Suggested subtasks:
 - add timer preference fields
 - add language preference field
 - save settings
+
+Implementation notes:
+
+- protected settings page created at `src/app/(app)/settings/page.tsx`
+- settings form persists language, default timer mode, and pomodoro values to `profiles`
+- saving settings also syncs the locale cookie for immediate bilingual updates
+- app navigation now includes the settings route in the private workspace
 
 ### Epic 9 - Deployment and Release
 

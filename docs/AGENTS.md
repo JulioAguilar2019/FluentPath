@@ -114,6 +114,7 @@ src/
 - dashboard now shows real MVP metrics for today, this week, sessions, active tasks, and streak
 - pomodoro timer is implemented with profile-based preferences and session persistence
 - bilingual support is implemented with locale persistence in cookies and profile preference sync
+- settings page is implemented for profile-based language and timer preferences
 
 ## Main Files Added or Updated During Setup
 
@@ -154,6 +155,10 @@ src/
 - `src/features/i18n/server.ts`
 - `src/features/i18n/components/locale-switcher.tsx`
 - `src/app/api/locale/route.ts`
+- `src/features/settings/actions.ts`
+- `src/features/settings/server.ts`
+- `src/features/settings/components/settings-form.tsx`
+- `src/app/(app)/settings/page.tsx`
 - `docs/SUPABASE_SETUP.md`
 - `supabase/migrations/001_initial_schema.sql`
 - `docs/DATABASE_SCHEMA.md`
@@ -348,3 +353,11 @@ Expected implementation work for that story:
 - locale switcher exists on public and private areas
 - locale persists through a cookie and syncs to `profiles.preferred_locale` when authenticated
 - key pages are translated: home, auth, app shell, dashboard, tasks, timer, and progress
+
+### Settings Progress
+
+- protected `/settings` page exists
+- users can update interface language from their profile
+- users can update default timer mode
+- users can update pomodoro focus, short break, long break, and interval values
+- settings persist to `profiles` and refresh the bilingual workspace
